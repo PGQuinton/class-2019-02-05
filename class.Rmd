@@ -1,0 +1,37 @@
+---
+title: "Class - Babynames"
+author: "Pieter Quinton"
+date: "2/5/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+library(babynames)
+library(tidyverse)
+```
+
+```{r}
+babynames2 <- babynames %>%
+  filter(str_detect(name, c("A", "E", "I", "O", "U"))) %>%
+  group_by(year) %>%
+  summarize(total = sum(n))
+
+babynames3 <- babynames %>%
+  group_by(year) %>%
+  summarize(total2 = sum(n))
+
+babynames2 %>%
+  inner_join(babynames3) %>%
+  mutate(prop = total/total2) %>% 
+  ggplot(aes(x = year, y = prop)) + 
+    geom_point() + 
+    geom_smooth(se = FALSE)
+
+babynames %>%
+  filter(year == 1880) %>%
+  arrange(desc(prop)) %>%
+  head(20)
+```
+
